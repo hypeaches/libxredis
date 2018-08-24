@@ -2,7 +2,7 @@
 #define LIBXREDIS_CONNECTION_H
 
 #include "x/redis/connection_pool.h"
-#include "x/redis/error_message.h"
+#include "x/redis/impl/error_message.h"
 
 struct redisContext;
 
