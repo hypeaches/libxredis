@@ -24,7 +24,7 @@ connection::~connection()
         hostname_ = nullptr;
     }
 }
-void connection::init_host(const char* hostname, int port, int timeout)
+void connection::set_host(const char* hostname, int port, int timeout)
 {
     if (hostname_)
     {
