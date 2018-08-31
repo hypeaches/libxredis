@@ -1,11 +1,10 @@
 #ifndef LIBXREDIS_COMMAND_H
 #define LIBXREDIS_COMMAND_H
 
-#include "x/redis/error.h"
-
 namespace x{namespace redis{
 
 class connection_pool;
+class error;
 
 class command
 {
@@ -14,7 +13,7 @@ public:
 
     //字符串操作
 public:
-    error append(const char* key, const char* val);
+    int append(const char* key, const char* val, error* err = nullptr);
 
 private:
     connection_pool* pool_;

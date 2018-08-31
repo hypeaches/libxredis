@@ -13,12 +13,13 @@ command::command(connection_pool* pool)
     pool_ = pool;
 }
 
-error command::append(const char* key, const char* val)
+int command::append(const char* key, const char* val, error* err)
 {
     connection* conn = pool_->lend();
     if (!conn)
     {
-        return error(error::errno_no_available_conn);
+        error::set(error::errno_no_available_conn, err);
+        return -1;
     }
     connection_guard grard(conn, pool_);
 
@@ -30,10 +31,12 @@ error command::append(const char* key, const char* val)
     redisReply* reply = static_cast<redisReply*>(redisCommand(conn->context(), cmd));
     if (!reply)
     {
-        return error(error::errno_no_redis_reply);
+        error::set(error::errno_no_redis_reply, err);
+        return false;
     }
 
-    return error(error::errno_ok);
+    error::set(error::errno_ok, err);
+    return true;
 }
 
 }}

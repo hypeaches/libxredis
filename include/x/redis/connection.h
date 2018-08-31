@@ -2,11 +2,12 @@
 #define LIBXREDIS_CONNECTION_H
 
 #include "x/redis/connection_pool.h"
-#include "x/redis/error.h"
 
 struct redisContext;
 
 namespace x{namespace redis{
+
+class error;
 
 class connection : public x::redis::connection_pool
 {
@@ -14,7 +15,7 @@ public:
     connection();
     ~connection();
     void set_host(const char* hostname, int port, int timeout);
-    error connect();
+    bool connect(error* err = nullptr);
     redisContext* context() {return cntx_;}
 
 public:

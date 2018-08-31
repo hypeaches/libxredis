@@ -3,8 +3,9 @@
 
 namespace x{namespace redis{
 
-struct error
+class error
 {
+public:
     enum
     {
         errno_ok,
@@ -16,13 +17,17 @@ struct error
 
     int errno;
     const char* message;
-    int* reference_count;
 
-    error(int errno);
-    error(const char* msg);
+    error();
+    ~error();
+    void set(int errno);
+    void set(const char* msg);
+    static void set(int errno, error* err);
+    static void set(const char* msg, error* err);
+
+private:
     error(error&& other);
     error(const error& other);
-    ~error();
     error& operator=(error&& other);
     error& operator=(const error& other);
 };
