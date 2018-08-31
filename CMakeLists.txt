@@ -15,10 +15,17 @@ include_directories(
     ${HIREDIS_INCLUDE_DIR}
 )
 file(GLOB_RECURSE LIBXREDIS_SRC_LIST ./src/*.cpp)
-add_library(${PROJECT_NAME} SHARED ${LIBXREDIS_SRC_LIST})
 
+add_library(${PROJECT_NAME} SHARED ${LIBXREDIS_SRC_LIST})
 target_link_libraries(
     ${PROJECT_NAME}
+    ${LIBX_LIB_DIR}/libx.a
+    ${HIREDIS_LIB_DIR}/libhiredis.a
+)
+
+add_executable(aaa ${LIBXREDIS_SRC_LIST})
+target_link_libraries(
+    aaa
     ${LIBX_LIB_DIR}/libx.a
     ${HIREDIS_LIB_DIR}/libhiredis.a
 )

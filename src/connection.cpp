@@ -9,6 +9,7 @@ connection::connection()
 {
     cntx_ = nullptr;
     hostname_ = nullptr;
+    is_used_ = false;
 }
 
 connection::~connection()
@@ -38,9 +39,8 @@ void connection::set_host(const char* hostname, int port, int timeout)
     timeout_ = timeout;
 }
 
-bool connection::connect()
+error connection::connect()
 {
-    reset_error();
     reset_context();
 
     timeval tv;
@@ -49,28 +49,25 @@ bool connection::connect()
     cntx_ = redisConnectWithTimeout(hostname_, port_, tv);
     if (!cntx_)
     {
-        x::stringbuf(errmsg_, errmsg_len_)
-            .append("redis error : connection : can't allocate redis context");
-        return false;
+        return error(error::errno_allocate_redis_context_failed);
     }
     if (cntx_->err)
     {
-        x::stringbuf(errmsg_, errmsg_len_)
-            .append("redis error : connection : ")
-            .append(cntx_->errstr);
-        reset_context();
-        return false;
+        return error(cntx_->errstr);
     }
-    return true;
+    return error(error::errno_ok);
 }
 
 connection* connection::lend()
 {
-    return this;
+    connection* conn = is_used_ ? nullptr : this;
+    is_used_ = true;
+    return conn;
 }
 
 void connection::give_back(x::redis::connection*)
 {
+    is_used_ = false;
 }
 
 void connection::reset_context()
