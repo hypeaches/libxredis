@@ -44,6 +44,7 @@ bool connection::connect(error* err)
 {
     reset_context();
 
+    bool ret = false;
     timeval tv;
     tv.tv_sec = timeout_ / 1000;
     tv.tv_usec = timeout_ % 1000 * 1000;
@@ -51,15 +52,17 @@ bool connection::connect(error* err)
     if (!cntx_)
     {
         error::set(error::errno_allocate_redis_context_failed, err);
-        return false;
     }
-    if (cntx_->err)
+    else if (cntx_->err)
     {
         error::set(cntx_->errstr, err);
-        return false;
     }
-    error::set(error::errno_ok, err);
-    return true;
+    else
+    {
+        ret = true;
+        error::set(error::errno_ok, err);
+    }
+    return ret;
 }
 
 connection* connection::lend()
