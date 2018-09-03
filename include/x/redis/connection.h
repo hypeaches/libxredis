@@ -7,7 +7,7 @@ struct redisContext;
 
 namespace x{namespace redis{
 
-class error;
+class errorinfo;
 
 class connection : public x::redis::connection_pool
 {
@@ -15,7 +15,7 @@ public:
     connection();
     ~connection();
     void set_host(const char* hostname, int port, int timeout);
-    bool connect(error* err = nullptr);
+    bool connect(errorinfo* err = nullptr);
     redisContext* context() {return cntx_;}
 
 public:

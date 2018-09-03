@@ -1,4 +1,4 @@
-#include "x/redis/error.h"
+#include "x/redis/errorinfo.h"
 #include "x/string/stringbuf.h"
 #include <cstdio>
 
@@ -9,7 +9,7 @@ namespace
 
     const char* errmsg[] = {
         "ok",
-        "redis error",
+        "redis errorinfo",
         "allocate redis context failed"
         "no available connection",
         "no redis reply",
@@ -17,75 +17,75 @@ namespace
 
 }
 
-error::error()
+errorinfo::errorinfo()
 {
-    this->errno = error::errno_ok;
-    message = errmsg[this->errno];
+    this->error_code = errorinfo::error_code_ok;
+    message = errmsg[this->error_code];
 }
 
-error::~error()
+errorinfo::~errorinfo()
 {
-    if (error::errno_redis_error == this->errno)
+    if (errorinfo::error_code_redis_error == this->error_code)
     {
         delete message;
     }
     message = nullptr;
-    this->errno = error::errno_ok;
+    this->error_code = errorinfo::error_code_ok;
 }
 
-error::error(error&& other)
+errorinfo::errorinfo(errorinfo&& other)
 {
-    errno = other.errno;
+    this->error_code = other.error_code;
     message = other.message;
     other.message = nullptr;
-    other.errno = error::errno_ok;
+    other.error_code = errorinfo::error_code_ok;
 }
 
-error::error(const error& other)
+errorinfo::errorinfo(const errorinfo& other)
 {
-    errno = other.errno;
+    this->error_code = other.error_code;
     message = other.message;
 }
 
-error& error::operator=(error&& other)
+errorinfo& errorinfo::operator=(errorinfo&& other)
 {
-    errno = other.errno;
+    this->error_code = other.error_code;
     message = other.message;
     other.message = nullptr;
-    other.errno = error::errno_ok;
+    other.error_code = errorinfo::error_code_ok;
     return *this;
 }
 
-error& error::operator=(const error& other)
+errorinfo& errorinfo::operator=(const errorinfo& other)
 {
-    errno = other.errno;
+    this->error_code = other.error_code;
     message = other.message;
     return *this;
 }
 
-void error::set(int errno)
+void errorinfo::set(int error_code)
 {
-    this->errno = errno;
-    message = errmsg[errno];
+    this->error_code = error_code;
+    message = errmsg[this->error_code];
 }
 
-void error::set(const char* msg)
+void errorinfo::set(const char* msg)
 {
-    this->errno = error::errno_redis_error;
+    this->error_code = errorinfo::error_code_redis_error;
     message = x::stringbuf(128)
         .append(msg)
         .moved_buffer();
 }
 
-void error::set(int errno, error* err)
+void errorinfo::set(int error_code, errorinfo* err)
 {
     if (err)
     {
-        err->set(errno);
+        err->set(error_code);
     }
 }
 
-void error::set(const char* msg, error* err)
+void errorinfo::set(const char* msg, errorinfo* err)
 {
     if (err)
     {

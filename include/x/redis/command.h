@@ -4,7 +4,7 @@
 namespace x{namespace redis{
 
 class connection_pool;
-class error;
+class errorinfo;
 
 class command
 {
@@ -13,7 +13,7 @@ public:
 
     //字符串操作
 public:
-    int append(const char* key, const char* val, error* err = nullptr);
+    int append(const char* key, const char* val, errorinfo* err = nullptr);
 
 private:
     connection_pool* pool_;

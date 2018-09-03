@@ -4,7 +4,7 @@
 #include "connection_guard.h"
 #include "x/redis/connection.h"
 #include "x/redis/connection_pool.h"
-#include "x/redis/error.h"
+#include "x/redis/errorinfo.h"
 
 namespace x{namespace redis{
 
@@ -13,12 +13,12 @@ command::command(connection_pool* pool)
     pool_ = pool;
 }
 
-int command::append(const char* key, const char* val, error* err)
+int command::append(const char* key, const char* val, errorinfo* err)
 {
     connection* conn = pool_->lend();
     if (!conn)
     {
-        error::set(error::errno_no_available_conn, err);
+        errorinfo::set(errorinfo::error_code_no_available_conn, err);
         return -1;
     }
     connection_guard grard(conn, pool_);
@@ -31,11 +31,11 @@ int command::append(const char* key, const char* val, error* err)
     redisReply* reply = static_cast<redisReply*>(redisCommand(conn->context(), cmd));
     if (!reply)
     {
-        error::set(error::errno_no_redis_reply, err);
+        errorinfo::set(errorinfo::error_code_no_redis_reply, err);
         return false;
     }
 
-    error::set(error::errno_ok, err);
+    errorinfo::set(errorinfo::error_code_ok, err);
     return true;
 }
 

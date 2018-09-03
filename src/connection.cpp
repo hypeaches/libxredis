@@ -2,7 +2,7 @@
 #include <sys/time.h>
 #include <hiredis.h>
 #include <x/string/stringbuf.h>
-#include "x/redis/error.h"
+#include "x/redis/errorinfo.h"
 
 namespace x{namespace redis{
 
@@ -40,7 +40,7 @@ void connection::set_host(const char* hostname, int port, int timeout)
     timeout_ = timeout;
 }
 
-bool connection::connect(error* err)
+bool connection::connect(errorinfo* err)
 {
     reset_context();
 
@@ -51,16 +51,16 @@ bool connection::connect(error* err)
     cntx_ = redisConnectWithTimeout(hostname_, port_, tv);
     if (!cntx_)
     {
-        error::set(error::errno_allocate_redis_context_failed, err);
+        errorinfo::set(errorinfo::error_code_allocate_redis_context_failed, err);
     }
     else if (cntx_->err)
     {
-        error::set(cntx_->errstr, err);
+        errorinfo::set(cntx_->errstr, err);
     }
     else
     {
         ret = true;
-        error::set(error::errno_ok, err);
+        errorinfo::set(errorinfo::error_code_ok, err);
     }
     return ret;
 }
