@@ -19,6 +19,8 @@ namespace
 
 errorinfo::errorinfo()
 {
+    port = 0;
+    host = nullptr;
     this->error_code = errorinfo::error_code_ok;
     message = errmsg[this->error_code];
 }
@@ -29,12 +31,16 @@ errorinfo::~errorinfo()
     {
         delete message;
     }
+    host = 0;
+    host = nullptr;
     message = nullptr;
     this->error_code = errorinfo::error_code_ok;
 }
 
 errorinfo::errorinfo(errorinfo&& other)
 {
+    port = other.port;
+    host = other.host;
     this->error_code = other.error_code;
     message = other.message;
     other.message = nullptr;
@@ -43,12 +49,16 @@ errorinfo::errorinfo(errorinfo&& other)
 
 errorinfo::errorinfo(const errorinfo& other)
 {
+    port = other.port;
+    host = other.host;
     this->error_code = other.error_code;
     message = other.message;
 }
 
 errorinfo& errorinfo::operator=(errorinfo&& other)
 {
+    port = other.port;
+    host = other.host;
     this->error_code = other.error_code;
     message = other.message;
     other.message = nullptr;
@@ -58,38 +68,44 @@ errorinfo& errorinfo::operator=(errorinfo&& other)
 
 errorinfo& errorinfo::operator=(const errorinfo& other)
 {
+    port = other.port;
+    host = other.host;
     this->error_code = other.error_code;
     message = other.message;
     return *this;
 }
 
-void errorinfo::set(int error_code)
+void errorinfo::set(int port, const char* host, int error_code)
 {
+    this->port = port;
+    this->host = host;
     this->error_code = error_code;
     message = errmsg[this->error_code];
 }
 
-void errorinfo::set(const char* msg)
+void errorinfo::set(int port, const char* host, const char* msg)
 {
+    this->port = port;
+    this->host = host;
     this->error_code = errorinfo::error_code_redis_error;
     message = x::stringbuf(128)
         .append(msg)
         .moved_buffer();
 }
 
-void errorinfo::set(int error_code, errorinfo* err)
+void errorinfo::set(int port, const char* host, int error_code, errorinfo* err)
 {
     if (err)
     {
-        err->set(error_code);
+        err->set(port, host, error_code);
     }
 }
 
-void errorinfo::set(const char* msg, errorinfo* err)
+void errorinfo::set(int port, const char* host, const char* msg, errorinfo* err)
 {
     if (err)
     {
-        err->set(msg);
+        err->set(port, host, msg);
     }
 }
 
