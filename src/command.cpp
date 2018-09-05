@@ -15,7 +15,7 @@ command::command(connection_pool* pool)
 
 int command::append(const char* key, const char* val, errorinfo* err)
 {
-    connection* conn = pool_->lend();
+    /*connection* conn = pool_->lend();
     if (!conn)
     {
         errorinfo::set(0, nullptr, errorinfo::error_code_no_available_conn, err);
@@ -35,7 +35,7 @@ int command::append(const char* key, const char* val, errorinfo* err)
         return false;
     }
 
-    errorinfo::set(conn->port(), conn->host(), errorinfo::error_code_ok, err);
+    errorinfo::set(conn->port(), conn->host(), errorinfo::error_code_ok, err);*/
     return true;
 }
 

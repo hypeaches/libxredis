@@ -1,9 +1,7 @@
-#ifndef LIBXREDIS_ERROR_H
-#define LIBXREDIS_ERROR_H
+#ifndef LIBXREDIS_ERRORINFO_H
+#define LIBXREDIS_ERRORINFO_H
 
 namespace x{namespace redis{
-
-class connection;
 
 class errorinfo
 {
@@ -17,17 +15,11 @@ public:
         error_code_no_redis_reply,
     };
 
-    int port;
-    const char* host;
     int error_code;
     const char* message;
 
     errorinfo();
     ~errorinfo();
-    void set(int port, const char* host, int error_code);
-    void set(int port, const char* host, const char* msg);
-    static void set(int port, const char* host, int error_code, errorinfo* err);
-    static void set(int port, const char* host, const char* msg, errorinfo* err);
 
 private:
     errorinfo(errorinfo&& other);
