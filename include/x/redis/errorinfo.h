@@ -9,6 +9,7 @@ public:
     enum
     {
         error_code_ok,
+        error_code_unkown,
         error_code_redis_error,
         error_code_allocate_redis_context_failed,
         error_code_no_available_conn,

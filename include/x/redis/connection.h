@@ -17,11 +17,11 @@ public:
     void set_host(const char* hostname, int port, int timeout);
     bool connect(errorinfo* err = nullptr);
     redisContext* context() { return cntx_; }
-    int conn_retry_times() { return conn_retry_times_; }
-    const char* host() { return hostname_; }
-    int port() { return port_; }
-    int read_retry_times() { return read_retry_times_; }
-    int write_retry_times() { return write_retry_times_; }
+    int conn_retry_times() const { return conn_retry_times_; }
+    const char* host() const { return hostname_; }
+    int port() const { return port_; }
+    int read_retry_times() const { return read_retry_times_; }
+    int write_retry_times() const { return write_retry_times_; }
 
 public:
     virtual x::redis::connection* lend() override;

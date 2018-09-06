@@ -52,13 +52,13 @@ bool connection::connect(errorinfo* err)
 
     for (int i = 0; i < conn_retry_times(); ++i)
     {
-        reset_context();
         cntx_ = redisConnectWithTimeout(hostname_, port_, tv);
         if (cntx_ && (cntx_->err == 0))
         {
             errorinfo_impl::set(hostname_, port_, errorinfo::error_code_ok, err);
             return true;
         }
+        reset_context();
     }
     if (!cntx_)
     {
@@ -73,7 +73,7 @@ bool connection::connect(errorinfo* err)
 
 connection* connection::lend()
 {
-    connection* conn = is_used_ ? nullptr : this;
+    connection* conn = (is_used_ || !cntx_) ? nullptr : this;
     is_used_ = true;
     return conn;
 }

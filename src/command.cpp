@@ -1,8 +1,8 @@
 #include "x/redis/command.h"
 #include "hiredis.h"
-#include "x/string/stringbuf.h"
 #include "connection_guard.h"
 #include "errorinfo_impl.h"
+#include "reply_parser.h"
 #include "x/redis/connection.h"
 #include "x/redis/connection_pool.h"
 #include "x/redis/errorinfo.h"
@@ -22,22 +22,10 @@ int command::append(const char* key, const char* val, errorinfo* err)
         errorinfo_impl::set(nullptr, 0, errorinfo::error_code_no_available_conn, err);
         return -1;
     }
-    connection_guard grard(conn, pool_);
+    connection_guard guard(conn, pool_);
 
-    const char* cmd = x::stringbuf()
-        .append("append ")
-        .append(key).append(" ")
-        .append(val)
-        .buffer();
-    redisReply* reply = static_cast<redisReply*>(redisCommand(conn->context(), cmd));
-    if (!reply)
-    {
-        errorinfo_impl::set(conn->host(), conn->port(), errorinfo::error_code_no_redis_reply, err);
-        return false;
-    }
-
-    errorinfo_impl::set(conn->host(), conn->port(), errorinfo::error_code_ok, err);
-    return true;
+    redisReply* reply = static_cast<redisReply*>(redisCommand(conn->context(), "append %s %s", key, val));
+    return reply_parser::int_reply(reply, conn, err);
 }
 
 }}

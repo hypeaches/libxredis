@@ -9,6 +9,7 @@ namespace
 
     const char* errmsg[] = {
         "ok",
+        "unkown error",
         "redis errorinfo",
         "allocate redis context failed"
         "no available connection",
