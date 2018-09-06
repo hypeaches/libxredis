@@ -32,9 +32,9 @@ void errorinfo_impl::set(const char* host, int port, int error_code, errorinfo* 
         {
             err->message = x::stringbuf(error_buf_default_size)
                 .append("redis error:")
-                .append(errmsg[error_code]).append(":")
                 .append(host).append(":")
-                .append(port)
+                .append(port).append(":")
+                .append(errmsg[error_code])
                 .moved_buffer();
         }
     }
@@ -47,9 +47,9 @@ void errorinfo_impl::set(const char* host, int port, const char* msg, errorinfo*
         err->error_code = errorinfo::error_code_redis_error;
         err->message = x::stringbuf(error_buf_default_size)
             .append("redis error:")
-            .append(msg).append(":")
             .append(host).append(":")
-            .append(port)
+            .append(port).append(":")
+            .append(msg)
             .moved_buffer();
     }
 }

@@ -2,6 +2,7 @@
 #include "hiredis.h"
 #include "x/string/stringbuf.h"
 #include "connection_guard.h"
+#include "errorinfo_impl.h"
 #include "x/redis/connection.h"
 #include "x/redis/connection_pool.h"
 #include "x/redis/errorinfo.h"
@@ -15,10 +16,10 @@ command::command(connection_pool* pool)
 
 int command::append(const char* key, const char* val, errorinfo* err)
 {
-    /*connection* conn = pool_->lend();
+    connection* conn = pool_->lend();
     if (!conn)
     {
-        errorinfo::set(0, nullptr, errorinfo::error_code_no_available_conn, err);
+        errorinfo_impl::set(nullptr, 0, errorinfo::error_code_no_available_conn, err);
         return -1;
     }
     connection_guard grard(conn, pool_);
@@ -31,11 +32,11 @@ int command::append(const char* key, const char* val, errorinfo* err)
     redisReply* reply = static_cast<redisReply*>(redisCommand(conn->context(), cmd));
     if (!reply)
     {
-        errorinfo::set(conn->port(), conn->host(), errorinfo::error_code_no_redis_reply, err);
+        errorinfo_impl::set(conn->host(), conn->port(), errorinfo::error_code_no_redis_reply, err);
         return false;
     }
 
-    errorinfo::set(conn->port(), conn->host(), errorinfo::error_code_ok, err);*/
+    errorinfo_impl::set(conn->host(), conn->port(), errorinfo::error_code_ok, err);
     return true;
 }
 
