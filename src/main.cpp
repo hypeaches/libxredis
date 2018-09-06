@@ -16,7 +16,9 @@ int main()
 
     x::redis::command cmd(&conn);
     
-    int ret = cmd.append("key1", "val1");
+    int ret = 0;
+    //ret = cmd.get("key1");
+    cmd.get("key1");
     std::cout<<"command ret: "<<ret<<std::endl;
     return 0;
 }

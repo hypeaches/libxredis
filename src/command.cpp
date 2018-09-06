@@ -28,4 +28,18 @@ int command::append(const char* key, const char* val, errorinfo* err)
     return reply_parser::int_reply(reply, conn, err);
 }
 
+void command::get(const char* key, errorinfo* err)
+{
+    connection* conn = pool_->lend();
+    if (!conn)
+    {
+        errorinfo_impl::set(nullptr, 0, errorinfo::error_code_no_available_conn, err);
+        return;
+    }
+    connection_guard guard(conn, pool_);
+
+    redisReply* reply = static_cast<redisReply*>(redisCommand(conn->context(), "get %s", key));
+    reply_parser::nil_string_error_reply(reply, conn, err);
+}
+
 }}

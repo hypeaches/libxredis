@@ -14,6 +14,7 @@ public:
     //字符串操作
 public:
     int append(const char* key, const char* val, errorinfo* err = nullptr);
+    void get(const char* key, errorinfo* err = nullptr);
 
 private:
     connection_pool* pool_;

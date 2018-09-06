@@ -12,6 +12,7 @@ class reply_parser
 {
 public:
     static int int_reply(redisReply*& reply, const connection* conn, errorinfo* err);
+    static void nil_string_error_reply(redisReply*& reply, const connection* conn, errorinfo* err);
 };
 
 }}

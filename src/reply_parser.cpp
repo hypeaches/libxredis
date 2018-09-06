@@ -33,4 +33,15 @@ int reply_parser::int_reply(redisReply*& reply, const connection* conn, errorinf
     return -1;
 }
 
+void reply_parser::nil_string_error_reply(redisReply*& reply, const connection* conn, errorinfo* err)
+{
+    if (!reply)
+    {
+        errorinfo_impl::set(conn->host(), conn->port(), errorinfo::error_code_no_redis_reply, err);
+        return;
+    }
+    reply_guard guard(reply);
+    testutil::print_redisreply(reply);
+}
+
 }}
