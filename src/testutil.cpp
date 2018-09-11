@@ -11,18 +11,18 @@ void print_redisreply1(const redisReply* reply)
 {
     printf("%s:%d\n", "type", reply->type);
     printf("%s:%lld\n", "integer", reply->integer);
-    printf("%s:%llu\n", "len", reply->len);
+    printf("%s:%lu\n", "len", reply->len);
     printf("%s:%s\n", "str", reply->str ? reply->str : "nullptr");
-    printf("%s:%llu\n", "elements", reply->elements);
+    printf("%s:%lu\n", "elements", reply->elements);
 }
 
 void print_redisreply2(const redisReply* reply)
 {
     printf("%s:%d\n", "type", reply->type);
     printf("%s:%lld\n", "integer", reply->integer);
-    printf("%s:%llu\n", "len", reply->len);
+    printf("%s:%lu\n", "len", reply->len);
     printf("%s:%s\n", "str", reply->str ? reply->str : "nullptr");
-    printf("%s:%llu\n", "elements", reply->elements);
+    printf("%s:%lu\n", "elements", reply->elements);
 }
 
 }

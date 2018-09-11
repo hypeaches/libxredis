@@ -11,7 +11,7 @@ namespace
         "ok",
         "unkown error",
         "redis errorinfo",
-        "allocate redis context failed"
+        "allocate redis context failed",
         "no available connection",
         "no redis reply",
     };
