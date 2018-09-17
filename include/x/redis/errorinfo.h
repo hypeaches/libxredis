@@ -3,30 +3,20 @@
 
 namespace x{namespace redis{
 
+enum
+{
+    error_code_ok,
+    error_code_allocate_redis_context_failed,
+    error_code_no_available_conn,
+    error_code_no_redis_reply,
+    error_code_reply_nil,
+    error_code_reply_error,
+};
+
 class errorinfo
 {
 public:
-    enum
-    {
-        error_code_ok,
-        error_code_unkown,
-        error_code_redis_error,
-        error_code_allocate_redis_context_failed,
-        error_code_no_available_conn,
-        error_code_no_redis_reply,
-    };
-
-    int error_code;
-    const char* message;
-
-    errorinfo();
-    ~errorinfo();
-
-private:
-    errorinfo(errorinfo&& other);
-    errorinfo(const errorinfo& other);
-    errorinfo& operator=(errorinfo&& other);
-    errorinfo& operator=(const errorinfo& other);
+    static const char* message(int ec);
 };
 
 }}

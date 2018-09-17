@@ -7,10 +7,10 @@ int main()
 {
     x::redis::connection conn;
     conn.set_host("127.0.0.1", 6379, 1500);
-    x::redis::errorinfo err;
-    if (!conn.connect(&err))
+    int ec = conn.connect();
+    if (ec)
     {
-        std::cout<<err.message<<std::endl;
+        std::cout<<x::redis::errorinfo::message(ec)<<std::endl;
         return 1;
     }
 
@@ -18,7 +18,8 @@ int main()
     
     int ret = 0;
     //ret = cmd.get("key1");
-    cmd.get("key1");
+    //cmd.get("key1");
+    cmd.exec_integer(NULL, "mget", "k1", "k2", "k3");
     std::cout<<"command ret: "<<ret<<std::endl;
     return 0;
 }

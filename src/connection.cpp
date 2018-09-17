@@ -2,7 +2,6 @@
 #include <sys/time.h>
 #include <hiredis.h>
 #include <x/string/stringbuf.h>
-#include "errorinfo_impl.h"
 #include "x/redis/errorinfo.h"
 
 namespace x{namespace redis{
@@ -13,8 +12,6 @@ connection::connection()
     hostname_ = nullptr;
     is_used_ = false;
     conn_retry_times_ = 1;
-    read_retry_times_ = 1;
-    write_retry_times_ = 1;
 }
 
 connection::~connection()
@@ -44,7 +41,7 @@ void connection::set_host(const char* hostname, int port, int timeout)
     timeout_ = timeout;
 }
 
-bool connection::connect(errorinfo* err)
+int connection::connect()
 {
     timeval tv;
     tv.tv_sec = timeout_ / 1000;
@@ -55,20 +52,20 @@ bool connection::connect(errorinfo* err)
         cntx_ = redisConnectWithTimeout(hostname_, port_, tv);
         if (cntx_ && (cntx_->err == 0))
         {
-            errorinfo_impl::set(hostname_, port_, errorinfo::error_code_ok, err);
-            return true;
+            return error_code_ok;
         }
         reset_context();
     }
+    int ret = error_code_allocate_redis_context_failed;
     if (!cntx_)
     {
-        errorinfo_impl::set(hostname_, port_, errorinfo::error_code_allocate_redis_context_failed, err);
+        ret = error_code_allocate_redis_context_failed;
     }
     else if (cntx_->err)
     {
-        errorinfo_impl::set(hostname_, port_, cntx_->errstr, err);
+        ret = error_code_reply_error;
     }
-    return false;
+    return ret;
 }
 
 connection* connection::lend()
@@ -81,6 +78,16 @@ connection* connection::lend()
 void connection::give_back(x::redis::connection*)
 {
     is_used_ = false;
+}
+
+int connection::conn_retry_times()
+{
+    return conn_retry_times_;
+}
+
+int connection::retry_times()
+{
+    return retry_times_;
 }
 
 void connection::reset_context()

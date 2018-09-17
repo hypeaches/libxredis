@@ -1,51 +1,30 @@
 #include "x/redis/errorinfo.h"
+#include "x/redis/command.h"
 
 namespace x{namespace redis{
 
-errorinfo::errorinfo()
+namespace
 {
-    this->error_code = errorinfo::error_code_ok;
-    message = nullptr;
+
+    const char* errmsg[] = {
+        "ok",
+        "allocate redis context failed",
+        "no available connection",
+        "no redis reply",
+        "redis reply nil"
+        "redis reply error",
+    };
+    const char* unkown_error_msg = "unknown error";
+
 }
 
-errorinfo::~errorinfo()
+const char* errorinfo::message(int ec)
 {
-    if (message && (this->error_code != errorinfo::error_code_ok))
+    if ((ec >= error_code_ok) && (ec <= error_code_reply_error))
     {
-        delete message;
+        return errmsg[ec];
     }
-    message = nullptr;
-    this->error_code = errorinfo::error_code_ok;
-}
-
-errorinfo::errorinfo(errorinfo&& other)
-{
-    this->error_code = other.error_code;
-    message = other.message;
-    other.error_code = errorinfo::error_code_ok;
-    other.message = nullptr;
-}
-
-errorinfo::errorinfo(const errorinfo& other)
-{
-    this->error_code = other.error_code;
-    message = other.message;
-}
-
-errorinfo& errorinfo::operator=(errorinfo&& other)
-{
-    this->error_code = other.error_code;
-    message = other.message;
-    other.error_code = errorinfo::error_code_ok;
-    other.message = nullptr;
-    return *this;
-}
-
-errorinfo& errorinfo::operator=(const errorinfo& other)
-{
-    this->error_code = other.error_code;
-    message = other.message;
-    return *this;
+    return unkown_error_msg;
 }
 
 }}
