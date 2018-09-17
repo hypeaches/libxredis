@@ -49,12 +49,12 @@ int connection::connect()
 
     for (int i = 0; i < conn_retry_times(); ++i)
     {
+        reset_context();
         cntx_ = redisConnectWithTimeout(hostname_, port_, tv);
         if (cntx_ && (cntx_->err == 0))
         {
             return error_code_ok;
         }
-        reset_context();
     }
     int ret = error_code_allocate_redis_context_failed;
     if (!cntx_)
@@ -65,6 +65,7 @@ int connection::connect()
     {
         ret = error_code_reply_error;
     }
+    reset_context();
     return ret;
 }
 
