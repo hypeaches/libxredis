@@ -18,13 +18,71 @@ namespace
 
 }
 
-const char* errorinfo::message(int ec)
-{printf("ec:%d\nok:%d\nerror:%d\n", ec, error_code_ok, error_code_reply_error);
+errorinfo::errorinfo()
+{
+    host = nullptr;
+    port = 0;
+    message_max_size = 1024;
+    message = new char[message_max_size];
+}
+
+errorinfo::~errorinfo()
+{
+    if (message)
+    {
+        delete message;
+        message = nullptr;
+    }
+}
+
+void errorinfo::set_error_message(int ec)
+{
+    const char* msg = nullptr;
     if ((ec >= error_code_ok) && (ec <= error_code_reply_error))
     {
-        return errmsg[ec];
+        msg = errmsg[ec];
     }
-    return unkown_error_msg;
+    else
+    {
+        msg = unkown_error_msg;
+    }
+
+    const char* phost = nullptr;
+    if (host)
+    {
+        phost = host;
+    }
+    else
+    {
+        host = "";
+    }
+
+    snprintf(message, message_max_size, "redis error:%s:%s:%d", msg, phost, port);
+}
+
+void errorinfo::set_error_message(const char* errmsg)
+{
+    const char* msg = nullptr;
+    if (errmsg)
+    {
+        msg = errmsg;
+    }
+    else
+    {
+        msg = unkown_error_msg;
+    }
+
+    const char* phost = nullptr;
+    if (host)
+    {
+        phost = host;
+    }
+    else
+    {
+        host = "";
+    }
+
+    snprintf(message, message_max_size, "redis error:%s:%s:%d", msg, phost, port);
 }
 
 }}

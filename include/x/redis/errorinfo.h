@@ -16,7 +16,15 @@ enum
 class errorinfo
 {
 public:
-    static const char* message(int ec);
+    const char* host;
+    int port;
+    char* message;
+    int message_max_size;
+
+    errorinfo();
+    ~errorinfo();
+    void set_error_message(int ec);
+    void set_error_message(const char* msg);
 };
 
 }}

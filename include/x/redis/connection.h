@@ -16,6 +16,7 @@ public:
     ~connection();
     void set_host(const char* hostname, int port, int timeout);
     int connect();
+    const char* error_message();
     redisContext* context() { return cntx_; }
     const char* host() const { return hostname_; }
     int port() const { return port_; }
@@ -38,6 +39,8 @@ private:
 
     int conn_retry_times_;
     int retry_times_;
+
+    errorinfo* errinfo_;
 };
 
 }}

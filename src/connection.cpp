@@ -69,6 +69,11 @@ int connection::connect()
     return ret;
 }
 
+const char* connection::error_message()
+{
+    return errinfo_->message;
+}
+
 connection* connection::lend()
 {
     connection* conn = (is_used_ || !cntx_) ? nullptr : this;
