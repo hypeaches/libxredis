@@ -12,7 +12,7 @@ public:
     ~reply_guard();
 
 private:
-    redisReply* reply_;
+    redisReply*& reply_;
 };
 
 }}

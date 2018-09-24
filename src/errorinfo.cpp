@@ -1,4 +1,5 @@
 #include "x/redis/errorinfo.h"
+#include <x/string/stringbuf.h>
 #include "x/redis/command.h"
 #include <cstdio>
 namespace x{namespace redis{
@@ -24,6 +25,7 @@ errorinfo::errorinfo()
     port = 0;
     message_max_size = 1024;
     message = new char[message_max_size];
+    buf = new x::stringbuf(message, message_max_size);
 }
 
 errorinfo::~errorinfo()
@@ -33,12 +35,17 @@ errorinfo::~errorinfo()
         delete message;
         message = nullptr;
     }
+    if (buf)
+    {
+        delete buf;
+        buf = nullptr;
+    }
 }
 
 void errorinfo::set_error_message(int ec)
 {
     const char* msg = nullptr;
-    if ((ec >= error_code_ok) && (ec <= error_code_reply_error))
+    if ((ec > error_code_ok) && (ec < error_code_reply_error))
     {
         msg = errmsg[ec];
     }

@@ -39,8 +39,6 @@ private:
 
     int conn_retry_times_;
     int retry_times_;
-
-    errorinfo* errinfo_;
 };
 
 }}

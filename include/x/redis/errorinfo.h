@@ -1,6 +1,12 @@
 #ifndef LIBXREDIS_ERRORINFO_H
 #define LIBXREDIS_ERRORINFO_H
 
+namespace x{
+
+    class stringbuf;
+
+}
+
 namespace x{namespace redis{
 
 enum
@@ -20,6 +26,7 @@ public:
     int port;
     char* message;
     int message_max_size;
+    x::stringbuf* buf;
 
     errorinfo();
     ~errorinfo();

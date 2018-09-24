@@ -4,8 +4,8 @@
 namespace x{namespace redis{
 
 reply_guard::reply_guard(redisReply*& reply)
+    : reply_(reply)
 {
-    reply_ = reply;
 }
 
 reply_guard::~reply_guard()

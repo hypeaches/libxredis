@@ -4,15 +4,16 @@
 
 namespace x{namespace redis{
 
-connection_guard::connection_guard(connection* conn, connection_pool* pool)
+connection_guard::connection_guard(connection*& conn, connection_pool* pool)
+    : conn_(conn)
+    , pool_(pool)
 {
-    conn_ = conn;
-    pool_ = pool;
 }
 
 connection_guard::~connection_guard()
 {
-    pool_->give_back(conn_);
+    pool_->release(conn_);
+    conn_ = nullptr;
 }
 
 }}
