@@ -1,7 +1,6 @@
 #include "x/redis/errorinfo.h"
 #include <x/string/stringbuf.h>
-#include "x/redis/command.h"
-#include <cstdio>
+
 namespace x{namespace redis{
 
 namespace
@@ -9,11 +8,6 @@ namespace
 
     const char* errmsg[] = {
         "ok",
-        "allocate redis context failed",
-        "no available connection",
-        "no redis reply",
-        "redis reply nil",
-        "redis reply error",
     };
     const char* unkown_error_msg = "unknown error";
 
@@ -21,20 +15,11 @@ namespace
 
 errorinfo::errorinfo()
 {
-    host = nullptr;
-    port = 0;
-    message_max_size = 1024;
-    message = new char[message_max_size];
-    buf = new x::stringbuf(message, message_max_size);
+    buf = new x::stringbuf();
 }
 
 errorinfo::~errorinfo()
 {
-    if (message)
-    {
-        delete message;
-        message = nullptr;
-    }
     if (buf)
     {
         delete buf;
@@ -42,10 +27,15 @@ errorinfo::~errorinfo()
     }
 }
 
-void errorinfo::set_error_message(int ec)
+const char* errorinfo::error_message() const
+{
+    return buf->buffer();
+}
+
+void errorinfo::set_error_message(const char* host, int port, int ec)
 {
     const char* msg = nullptr;
-    if ((ec > error_code_ok) && (ec < error_code_reply_error))
+    if ((ec >= error_code_ok) && (ec < error_code_unknown))
     {
         msg = errmsg[ec];
     }
@@ -54,42 +44,20 @@ void errorinfo::set_error_message(int ec)
         msg = unkown_error_msg;
     }
 
-    const char* phost = nullptr;
-    if (host)
-    {
-        phost = host;
-    }
-    else
-    {
-        host = "";
-    }
-
-    snprintf(message, message_max_size, "redis error:%s:%s:%d", msg, phost, port);
+    set_error_message(host, port, msg);
 }
 
-void errorinfo::set_error_message(const char* errmsg)
+void errorinfo::set_error_message(const char* host, int port, const char* errmsg)
 {
-    const char* msg = nullptr;
-    if (errmsg)
+    if (!buf->empty())
     {
-        msg = errmsg;
+        buf->append(";")
     }
-    else
-    {
-        msg = unkown_error_msg;
-    }
-
-    const char* phost = nullptr;
-    if (host)
-    {
-        phost = host;
-    }
-    else
-    {
-        host = "";
-    }
-
-    snprintf(message, message_max_size, "redis error:%s:%s:%d", msg, phost, port);
+    buf->append(host)
+        .append(":")
+        .append(port)
+        .append(":")
+        .append(msg);
 }
 
 }}

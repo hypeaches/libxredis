@@ -1,53 +1,52 @@
 #ifndef LIBXREDIS_COMMAND_H
 #define LIBXREDIS_COMMAND_H
 
-#include "cstdio"
-#include <x/string/stringbuf.h>
-
-struct redisReply;
+#include "x/redis/command_impl.h"
 
 namespace x{namespace redis{
 
 class connection_pool;
-class errorinfo;
 
 class command
 {
 public:
-    command(connection_pool* pool);
+    command();
+    ~command();
+    static int init(int count);
 
 public:
     template <typename ...T>
-    long long int exec_integer(T... args);
-    int exec(const char* cmd, long long int* rep);
+    command& build(T... args);
+    command& start_build(const char* op);
+    command& stop_build();
+
+public:
+    enum
+    {
+        result_ok = 0,
+        result_failed,
+        result_half
+    };
+    int exec(long long int& res);
+    int exec(std::string& res);
+    int exec(std::vector<std::string>& res, int count_per_op);
+    int exec(std::vector<std::vector<std::string>>& res, int count_per_op);
+
+public:
+    const char* error_message() const;
 
 private:
-    int do_redis_command(const char* cmd, redisReply*& rep);
-
-private:
-    connection_pool* pool_;
+    x::redis::command_impl* impl_;
 };
 
-template <typename T>
-void build_cmd(x::stringbuf& buf, T t)
-{
-    buf.append(t).append(" ");
-}
-
-template <typename T, typename ...Args>
-void build_cmd(x::stringbuf& buf, T head, Args... args)
-{
-    buf.append(head).append(" ");
-    build_cmd(buf, args...);
-}
-
 template <typename ...T>
-long long int command::exec_integer(T ...args)
+command& command::build(T ...args)
 {
-    x::stringbuf buf(1024);
-    build_cmd(buf, args...);
-    printf("%s\n", buf.buffer());
-    return 0;
+    if (impl_)
+    {
+        impl_->build(args...);
+    }
+    return *this;
 }
 
 }}
