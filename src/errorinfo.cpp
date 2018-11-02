@@ -1,5 +1,4 @@
 #include "x/redis/errorinfo.h"
-#include <x/string/stringbuf.h>
 
 namespace x{namespace redis{
 
@@ -8,28 +7,15 @@ namespace
 
     const char* errmsg[] = {
         "ok",
+        "redis context allocate failed",
     };
     const char* unkown_error_msg = "unknown error";
 
 }
 
-errorinfo::errorinfo()
-{
-    buf = new x::stringbuf();
-}
-
-errorinfo::~errorinfo()
-{
-    if (buf)
-    {
-        delete buf;
-        buf = nullptr;
-    }
-}
-
 const char* errorinfo::error_message() const
 {
-    return buf->buffer();
+    return buf_.buffer();
 }
 
 void errorinfo::set_error_message(const char* host, int port, int ec)
@@ -49,11 +35,11 @@ void errorinfo::set_error_message(const char* host, int port, int ec)
 
 void errorinfo::set_error_message(const char* host, int port, const char* errmsg)
 {
-    if (!buf->empty())
+    if (!buf_.empty())
     {
-        buf->append(";")
+        buf_.append(";")
     }
-    buf->append(host)
+    buf_.append(host)
         .append(":")
         .append(port)
         .append(":")

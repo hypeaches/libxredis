@@ -15,9 +15,9 @@ void set_timeout(int t, timeval& timeout)
 conf::conf()
 {
     set_host("127.0.0.1", 6739);
-    set_conn_retry_time(3);
+    set_conn_retry_times(1);
     set_conn_timeout(1000);
-    set_rw_retry_time(3);
+    set_rw_retry_times(3);
     set_rw_timeout(1000);
 }
 
@@ -27,9 +27,9 @@ void conf::set_host(const char* host, int port)
     port_ = port;
 }
 
-void conf::set_conn_retry_time(int retry_time)
+void conf::set_conn_retry_times(int retry_times)
 {
-    conn_retry_time = retry_time;
+    conn_retry_times_ = retry_times;
 }
 
 void conf::set_conn_timeout(int timeout)
@@ -37,9 +37,9 @@ void conf::set_conn_timeout(int timeout)
     set_timeout(timeout, conn_timeout_);
 }
 
-void conf::set_rw_retry_time(int retry_time)
+void conf::set_rw_retry_times(int retry_times)
 {
-    rw_retry_time = retry_time;
+    rw_retry_times_ = retry_times;
 }
 
 void conf::set_rw_timeout(int timeout)

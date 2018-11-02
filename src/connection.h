@@ -6,6 +6,7 @@ struct redisContext;
 namespace x{namespace redis{
 
 class conf;
+class errorinfo;
 
 class connection
 {
@@ -16,14 +17,14 @@ public:
     void set_conf(conf* c);
     redisContext* context() { return cntx_; }
 
-    int connect();
+    bool connect(errorinfo& err);
 
 private:
     void reset_context();
 
 private:
-    redisContext* cntx_;
     conf* conf_;
+    redisContext* cntx_;
 
 };
 
