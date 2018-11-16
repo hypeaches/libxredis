@@ -49,6 +49,12 @@ bool connection::connect()
     return ret;
 }
 
+bool connection::reconnect()
+{
+	reset_context();
+	return connect();
+}
+
 redisContext* connection::context()
 {
     return context_;

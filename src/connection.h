@@ -15,6 +15,7 @@ public:
 public:
     void set_conf(const conf* c);
     bool connect();
+	bool reconnect();
     redisContext* context();
 
 private:
