@@ -5,6 +5,7 @@
 #include "x/redis/connection_pool.h"
 #include "connection.h"
 #include "connection_guard.h"
+#include "redis_log.h"
 
 namespace x{namespace redis{
 
@@ -56,6 +57,7 @@ bool command_impl::exec(const std::function<void(int index, long long int* integ
 	connection* conn = nullptr;
 	int cmd_size = 0;
 	int ok = 0;
+    XREDISLOG("127.0.0.1", 6079, "test", "test msg");
 	for (int i = 0; i < rw_retry_times; i++)
 	{
 		ok = 0;
