@@ -25,6 +25,11 @@ command::~command()
 {
 }
 
+int command::count()
+{
+    return impl_->count();
+}
+
 command& command::build(const char* cmd)
 {
     impl_->build(cmd);
@@ -34,6 +39,16 @@ command& command::build(const char* cmd)
 bool command::exec()
 {
     return impl_->exec();
+}
+
+bool command::exec(long long int& integer)
+{
+    return impl_->exec(integer);
+}
+
+bool command::exec(const std::function<void(int index, long long int* integer, const char* string)>& cb)
+{
+    return impl_->exec(cb);
 }
 
 }}
