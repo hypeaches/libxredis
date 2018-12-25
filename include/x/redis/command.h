@@ -1,31 +1,34 @@
 #ifndef LIBXREDIS_COMMAND_H
 #define LIBXREDIS_COMMAND_H
 
-#include <functional>
+#include <string>
+#include <vector>
 
 namespace x{namespace redis{
 
-class command_impl;
-class connection_pool;
+struct options;
 
 class command
 {
 public:
     command();
-    command(connection_pool* pool);
     ~command();
-    static connection_pool* default_connection_pool;
 
 public:
-    int count();
-    command& build(const char* cmd);
-    bool exec();
-    bool exec(long long int& integer);
-    bool exec(const std::function<void(int index, long long int* integer, const char* string)>& cb);
+    enum {
+        exec_ok = 0,
+        exec_null,
+        exec_failed
+    };
+    static int init(const options& opt);
 
-private:
-    connection_pool* connection_pool_;
-    command_impl* impl_;
+public:
+    int exec(const std::string& cmd);
+    int exec(const std::string& cmd, std::string& req);
+    int exec(const std::string& cmd, long long int& req);
+    int exec(const std::string& cmd, std::vector<std::string>& req);
+    int exec(const std::vector<std::string>& cmds);
+    int exec(const std::vector<std::string>& cmds, std::vector<std::string>& req);
 };
 
 }}

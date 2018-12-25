@@ -1,54 +1,50 @@
 #include "x/redis/command.h"
-#include "command_impl.h"
+#include "x/redis/connection_pool.h"
 
 namespace x{namespace redis{
 
-connection_pool* command::default_connection_pool = nullptr;
-
 command::command()
 {
-    connection_pool_ = default_connection_pool;
-    static command_impl impl;
-    impl.set_connection_pool(connection_pool_);
-    impl_ = &impl;
-}
-
-command::command(connection_pool* pool)
-{
-    connection_pool_ = pool;
-    static command_impl impl;
-    impl.set_connection_pool(connection_pool_);
-    impl_ = &impl;
 }
 
 command::~command()
 {
 }
 
-int command::count()
+int command::init(const options& opt)
 {
-    return impl_->count();
+    return 0;
 }
 
-command& command::build(const char* cmd)
+int command::exec(const std::string& cmd, std::string& req) 
 {
-    impl_->build(cmd);
-    return *this;
+    return command::exec_failed;
 }
 
-bool command::exec()
+int command::exec(const std::string& cmd, long long int& req) 
 {
-    return impl_->exec();
+    return command::exec_failed;
 }
 
-bool command::exec(long long int& integer)
+int command::exec(const std::string& cmd) 
 {
-    return impl_->exec(integer);
+    return command::exec_failed;
 }
 
-bool command::exec(const std::function<void(int index, long long int* integer, const char* string)>& cb)
+int command::exec(const std::string& cmd, std::vector<std::string>& req) 
 {
-    return impl_->exec(cb);
+    return command::exec_failed;
 }
+
+int command::exec(const std::vector<std::string>& cmds) 
+{
+    return command::exec_failed;
+}
+
+int command::exec(const std::vector<std::string>& cmds, std::vector<std::string>& req) 
+{
+    return command::exec_failed;
+}
+
 
 }}

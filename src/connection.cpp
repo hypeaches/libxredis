@@ -1,72 +1,77 @@
-#include "connection.h"
+#include "x/redis/connection.h"
+#include <sys/time.h>
 #include <hiredis.h>
-#include "x/redis/conf.h"
+#include "x/redis/log.h"
+#include "x/redis/options.h"
 
 namespace x{namespace redis{
 
 connection::connection()
 {
-    conf_ = nullptr;
+    opt_ = nullptr;
     context_ = nullptr;
 }
 
-void connection::set_conf(const conf* c)
+connection::~connection()
 {
-    conf_ = c;
-}
-
-bool connection::connect()
-{
-    if (!conf_)
-    {
-        //todo:
-    }
-
-    bool ret = false;
-    int port = conf_->port();
-    const char* host = conf_->host();
-    int retry_times = conf_->connect_retry_times();
-    timeval connect_timeout = conf_->connect_timeout();
-    
-    for (int i = 0; i < retry_times; i++)
-    {
-        context_ = redisConnectWithTimeout(host, port, connect_timeout);
-        if (!context_)
-        {
-            //todo:创建context失败
-        }
-        else if (context_->err)
-        {
-            //todo:redis返回一个错误
-        }
-        else
-        {
-            ret = true;
-            break;
-        }
-        reset_context();
-    }
-    return ret;
-}
-
-bool connection::reconnect()
-{
-	reset_context();
-	return connect();
-}
-
-redisContext* connection::context()
-{
-    return context_;
-}
-
-void connection::reset_context()
-{
+    opt_ = nullptr;
     if (context_)
     {
         redisFree(context_);
         context_ = nullptr;
     }
 }
+
+bool connection::init(const options& opt)
+{
+    opt_ = &opt;
+    return true;
+}
+
+bool connection::connect()
+{
+    timeval timeout;
+    timeout.tv_sec = opt_->connect_timeout / 1000;
+    timeout.tv_usec = opt_->connect_timeout % 1000 * 1000;
+
+    context_ = redisConnectWithTimeout(
+        opt_->host.c_str(),
+        opt_->port,
+        timeout
+    );
+    if (!context_)
+    {
+        XREDISLOG_WARNING(
+            opt_->host.c_str(),
+            opt_->port,
+            "connect failed",
+            ""
+        );
+        return false;
+    }
+    if (context_->err)
+    {
+        XREDISLOG_WARNING(
+            opt_->host.c_str(),
+            opt_->port,
+            context->errstr,
+            ""
+        );
+        return false;
+    }
+
+    return true;
+}
+
+bool connection::disconnect()
+{
+    if (context_)
+    {
+        redisFree(context_);
+        context_ = nullptr;
+    }
+    return true;
+}
+
 
 }}
