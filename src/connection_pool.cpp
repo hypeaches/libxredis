@@ -1,4 +1,5 @@
 #include "x/redis/connection_pool.h"
+#include "x/redis/log.h"
 #include "x/redis/options.h"
 #include "x/redis/connection.h"
 
@@ -38,6 +39,15 @@ connection* connection_pool::create()
     {
         conn = pool_.back();
         pool_.pop_back();
+    }
+    if (!conn)
+    {
+        XREDISLOG_WARNING(
+            host_.c_str(),
+            port_,
+            "create connection failed",
+            ""
+        );
     }
     return conn;
 }

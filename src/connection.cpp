@@ -75,9 +75,4 @@ bool connection::disconnect()
     return true;
 }
 
-const options* connection::option()
-{
-    return opt_;
-}
-
 }}

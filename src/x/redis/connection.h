@@ -17,7 +17,9 @@ public:
     bool init(const std::string& host, int port, const options* opt);
     bool connect();
     bool disconnect();
-    const options* option();
+    int port() { return port_; }
+    const char* host() { return host_.c_str(); }
+    const options* option() { return opt_; }
     redisContext* context() { return context_; }
 
 private:

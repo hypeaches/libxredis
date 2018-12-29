@@ -4,7 +4,6 @@
 #include <vector>
 #include <mutex>
 
-#include "x/redis/log.h"
 #include "x/redis/options.h"
 #include "x/redis/connection.h"
 #include "x/redis/connection_pool.h"
