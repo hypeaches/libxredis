@@ -20,15 +20,16 @@ public:
         exec_null,
         exec_failed
     };
-    static int add_pool(const options& opt);
+    static void init(const options* opt);
+    static bool add_pool(const char* host, int port);
 
 public:
-    int exec(const std::string& cmd);
-    int exec(const std::string& cmd, std::string& req);
-    int exec(const std::string& cmd, long long int& req);
-    int exec(const std::string& cmd, std::vector<std::string>& req);
-    int exec(const std::vector<std::string>& cmds);
-    int exec(const std::vector<std::string>& cmds, std::vector<std::string>& req);
+    bool exec(const std::string& cmd);
+    bool exec(const std::string& cmd, std::string& req);
+    bool exec(const std::string& cmd, long long int& req);
+    bool exec(const std::string& cmd, std::vector<std::string>& req);
+    bool exec(const std::vector<std::string>& cmds);
+    bool exec(const std::vector<std::string>& cmds, std::vector<std::string>& req);
 };
 
 }}

@@ -11,7 +11,9 @@ class connection_pool_group {
 public:
     ~connection_pool_group();
     static connection_pool_group* instance();
-    bool add_pool(const options* opt);
+    const options* option();
+    void init(const options* opt);
+    bool add_pool(const char* host, int port);
     connection* create_connection(int& pool_index);
     void release_connection(connection* conn, int pool_index);
 

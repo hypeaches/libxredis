@@ -13,9 +13,11 @@ connection_pool::~connection_pool()
     pool_.clear();
 }
 
-bool connection_pool::init(const options* opt)
+bool connection_pool::init(const std::string& host, int port, const options* opt)
 {
     opt_ = opt;
+    port_ = port;
+    host_ = host;
     real_size_ = 0;
     pool_.reserve(opt_->pool_max_connections);
     for (int i = 0; i < opt_->pool_connections; i++)
@@ -28,6 +30,10 @@ bool connection_pool::init(const options* opt)
 connection* connection_pool::create()
 {
     connection* conn = nullptr;
+    if (pool_.empty())
+    {
+        increase();
+    }
     if (!pool_.empty())
     {
         conn = pool_.back();
@@ -46,7 +52,7 @@ void connection_pool::increase()
     if (real_size_ < opt_->pool_max_connections)
     {
         connection* conn = new connection;
-        conn->init(opt_);
+        conn->init(host_, port_, opt_);
         conn->connect();
         pool_.push_back(conn);
         real_size_++;

@@ -22,9 +22,11 @@ connection::~connection()
     }
 }
 
-bool connection::init(const options* opt)
+bool connection::init(const std::string& host, int port, const options* opt)
 {
     opt_ = opt;
+    port_ = port;
+    host_ = host;
     return true;
 }
 
@@ -35,15 +37,15 @@ bool connection::connect()
     timeout.tv_usec = opt_->connect_timeout % 1000 * 1000;
 
     context_ = redisConnectWithTimeout(
-        opt_->host.c_str(),
-        opt_->port,
+        host_.c_str(),
+        port_,
         timeout
     );
     if (!context_)
     {
         XREDISLOG_WARNING(
-            opt_->host.c_str(),
-            opt_->port,
+            host_.c_str(),
+            port_,
             "connect failed",
             ""
         );
@@ -52,8 +54,8 @@ bool connection::connect()
     if (context_->err)
     {
         XREDISLOG_WARNING(
-            opt_->host.c_str(),
-            opt_->port,
+            host_.c_str(),
+            port_,
             context_->errstr,
             ""
         );
@@ -73,5 +75,9 @@ bool connection::disconnect()
     return true;
 }
 
+const options* connection::option()
+{
+    return opt_;
+}
 
 }}

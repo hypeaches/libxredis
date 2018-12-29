@@ -14,8 +14,9 @@ namespace x{namespace redis{
 namespace {
 
 std::atomic<uint64_t> pool_group_index(0);
-std::vector<const options*> options_group;
-static thread_local std::vector<connection_pool*> pool_group;
+const options* global_options;
+std::vector<std::pair<std::string, int>> host_group;
+thread_local std::vector<connection_pool*> pool_group;
 
 }
 
@@ -47,9 +48,19 @@ connection_pool_group* connection_pool_group::instance()
     return &group;
 }
 
-bool connection_pool_group::add_pool(const options* opt)
+const options* connection_pool_group::option()
 {
-    options_group.push_back(opt);
+    return global_options;
+}
+
+void connection_pool_group::init(const options* opt)
+{
+    global_options = opt;
+}
+
+bool connection_pool_group::add_pool(const char* host, int port)
+{
+    host_group.push_back(std::make_pair(std::string(host), port));
     return true;
 }
 
@@ -61,12 +72,7 @@ connection* connection_pool_group::create_connection(int& pool_index)
     pool_index = static_cast<int>(index % pool_group_size);
     connection_pool* pool = pool_group[pool_index];
     connection* conn = pool->create();
-    if (!conn)
-    {
-        pool->increase();
-    }
-    conn = pool->create();
-    return nullptr;
+    return conn;
 }
 
 void connection_pool_group::release_connection(connection* conn, int pool_index)
@@ -84,10 +90,10 @@ bool connection_pool_group::init_group() {
     }
 
     connection_pool* pool = nullptr;
-    for (const options* opt : options_group)
+    for (const auto& pair : host_group)
     {
         pool = new connection_pool;
-        pool->init(opt);
+        pool->init(pair.first, pair.second, global_options);
         pool_group.push_back(pool);
     }
     return true;
