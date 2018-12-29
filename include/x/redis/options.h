@@ -13,6 +13,7 @@ int port;
 int retry_times;
 int connect_timeout;
 int read_write_timeout;
+int pool_connections;
 int pool_max_connections;
 std::string host;
 };

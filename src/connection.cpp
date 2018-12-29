@@ -22,9 +22,9 @@ connection::~connection()
     }
 }
 
-bool connection::init(const options& opt)
+bool connection::init(const options* opt)
 {
-    opt_ = &opt;
+    opt_ = opt;
     return true;
 }
 
@@ -54,7 +54,7 @@ bool connection::connect()
         XREDISLOG_WARNING(
             opt_->host.c_str(),
             opt_->port,
-            context->errstr,
+            context_->errstr,
             ""
         );
         return false;

@@ -20,7 +20,7 @@ public:
         exec_null,
         exec_failed
     };
-    static int init(const options& opt);
+    static int add_pool(const options& opt);
 
 public:
     int exec(const std::string& cmd);

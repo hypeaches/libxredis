@@ -12,7 +12,7 @@ class connection
 public:
     connection();
     ~connection();
-    bool init(const options& opt);
+    bool init(const options* opt);
     bool connect();
     bool disconnect();
     redisContext* context() { return context_; }

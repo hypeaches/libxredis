@@ -9,7 +9,7 @@ void print(const char* str, const timeval& tv);
 int main()
 {
 	x::redis::options opt;
-    x::redis::command::init(opt);
+    x::redis::command::add_pool(opt);
     x::redis::command cmd;
     cmd.exec("get key1");
     return 0;

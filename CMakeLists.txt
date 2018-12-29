@@ -11,7 +11,7 @@ set(HIREDIS_LIB_DIR "/Users/baidu/lx/code/libx/hiredis")
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/src/include
     ${LIBX_INCLUDE_DIR}
     ${HIREDIS_INCLUDE_DIR}
 )

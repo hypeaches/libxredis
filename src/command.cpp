@@ -11,7 +11,7 @@ command::~command()
 {
 }
 
-int command::init(const options& opt)
+int command::add_pool(const options& opt)
 {
     return 0;
 }

@@ -13,16 +13,14 @@ connection_pool::~connection_pool()
     pool_.clear();
 }
 
-bool connection_pool::init(const options& opt)
+bool connection_pool::init(const options* opt)
 {
     opt_ = opt;
-    pool_.reserve(opt.pool_max_connections);
-    for (int i = 0; i < opt.pool_max_connections; i++)
+    real_size_ = 0;
+    pool_.reserve(opt_->pool_max_connections);
+    for (int i = 0; i < opt_->pool_connections; i++)
     {
-        connection* conn = new connection;
-        conn->init(opt);
-        conn->connect();
-        pool_.push_back(conn);
+        increase();
     }
     return true;
 }
@@ -43,5 +41,16 @@ void connection_pool::release(connection* conn)
     pool_.push_back(conn);
 }
 
+void connection_pool::increase()
+{
+    if (real_size_ < opt_->pool_max_connections)
+    {
+        connection* conn = new connection;
+        conn->init(opt_);
+        conn->connect();
+        pool_.push_back(conn);
+        real_size_++;
+    }
+}
 
 }}

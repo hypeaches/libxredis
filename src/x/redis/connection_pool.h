@@ -12,11 +12,13 @@ class connection_pool
 {
 public:
     ~connection_pool();
-    bool init(const options& opt);
+    bool init(const options* opt);
     connection* create();
     void release(connection* conn);
+    void increase();
 
 private:
+    int real_size_;
     const options* opt_;
     std::vector<connection*> pool_;
 };
