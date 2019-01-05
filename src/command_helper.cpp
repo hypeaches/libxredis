@@ -61,14 +61,26 @@ int command_helper::parse_none(std::nullptr_t)
     return command::exec_ok;
 }
 
-int command_helper::parse_llint(long long int& req)
+int command_helper::parse_llint(long long int& rep)
 {
-    return command::exec_failed;
+    int ret = command::exec_failed;
+    if (reply && (REDIS_REPLY_INTEGER == reply->type))
+    {
+        rep = reply->integer;
+        ret = command::exec_ok;
+    }
+    return ret;
 }
 
-int command_helper::parse_string(std::string& req)
+int command_helper::parse_string(std::string& rep)
 {
-    return command::exec_failed;
+    int ret = command::exec_failed;
+    if (reply && (REDIS_REPLY_STRING == reply->type))
+    {
+        rep = reply->str;
+        ret = command::exec_ok;
+    }
+    return ret;
 }
 
 int command_helper::parse_multistring(std::vector<std::string>& rep)

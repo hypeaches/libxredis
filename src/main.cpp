@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <string>
 #include <x/redis/options.h>
 #include <x/redis/command.h>
 
@@ -8,11 +9,15 @@ void print(const char* str, const timeval& tv);
 
 int main()
 {
+    int ret = 0;
+    std::string rep;
 	x::redis::options opt;
     x::redis::command::init(&opt);
     x::redis::command::add_pool("127.0.0.1", 6379);
     x::redis::command cmd;
-    cmd.exec("get key1");
+    ret = cmd.exec("get key1", rep);
+    std::cout<<"key1:"<<rep<<std::endl;
+    std::cout<<"get key1 result:"<<ret<<std::endl;
     return 0;
 }
 

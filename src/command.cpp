@@ -16,7 +16,7 @@ int doexec(const std::string& cmd, ReplyType& rep, const CallbackType& cb)
 {
     int ret = command::exec_failed;
     const options* opt = connection_pool_group::instance()->option();
-    for (int i = 0; (!ret) && (i < opt->retry_times); i++)
+    for (int i = 0; (command::exec_failed == ret) && (i < opt->retry_times); i++)
     {
         command_helper helper;
         if (!helper.conn)
